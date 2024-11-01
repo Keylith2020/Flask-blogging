@@ -98,12 +98,35 @@ def edit(id):
 
             #redirect to home page
             return redirect(url_for('index'))
+
         
   
 
 #If get then display page
     return render_template('edit.html', post=post)
 
+#create route to delete a post, processed only with post
+# post id in url parameter
+@app.route('/<int:id>/delete', methods=('POST' ,))
+def delete(id):
+    #get post
+    post = get_post(id)
+
+    #connect to database
+    conn = get_db_connection()
+
+    #execute a delete query
+    conn.execute('DELETE from posts WHERE id = ?', (id, ))
+
+    #commit and close the connection
+    conn.commit()
+    conn.close()
+
+    #flash a successful message
+    flash('"{}" was successfully deleted!' .format(post['title']))
+
+    #redirect to homepage
+    return redirect(url_for('index'))
 
 
 app.run()
